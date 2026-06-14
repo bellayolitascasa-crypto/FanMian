@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f8f5ee" />
+    <title>翻面</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="topbar">
+        <div class="brand">
+          <span class="mark" aria-hidden="true"></span>
+          <span>翻面</span>
+        </div>
+        <button class="ghost-button" id="historyButton" type="button">记录</button>
+      </header>
+
+      <section class="panel input-panel" id="inputPanel">
+        <div class="eyebrow">今天要翻哪一面？</div>
+        <textarea
+          id="worryInput"
+          maxlength="800"
+          placeholder="写一件具体烦心事。比如：今天想打麻将，但我爸不想玩，三缺一。"
+        ></textarea>
+        <div class="input-meta">
+          <span id="modeLabel">AI 翻面</span>
+          <span id="counter">0/800</span>
+        </div>
+        <button class="primary-button" id="flipButton" type="button">
+          <span id="buttonText">翻面</span>
+          <span class="spinner" id="spinner" aria-hidden="true"></span>
+        </button>
+        <div class="samples">
+          <button type="button" data-sample="今天本来想早点睡，结果刷手机刷到很晚，睡前又开始后悔。">
+            熬夜后悔
+          </button>
+          <button type="button" data-sample="每次和婆婆打电话，她都会暗示一些让我不舒服的话，让我越来越不想打。">
+            家庭压力
+          </button>
+          <button type="button" data-sample="今天点外卖等了很久，送到的时候饭都有点凉了，感觉很烦。">
+            外卖变凉
+          </button>
+        </div>
+      </section>
+
+      <section class="panel result-panel hidden" id="resultPanel" aria-live="polite">
+        <div class="result-head">
+          <span>好的一面</span>
+          <button class="ghost-button" id="newButton" type="button">再写一件</button>
+        </div>
+        <ol class="benefits" id="benefitsList"></ol>
+        <div class="next-step">
+          <span>下一步</span>
+          <p id="nextStepText"></p>
+        </div>
+        <button class="flip-card" id="cardButton" type="button">
+          <span>翻面</span>
+          <strong id="flipLineText"></strong>
+        </button>
+        <div class="feedback">
+          <span>这次像“翻面”吗？</span>
+          <div>
+            <button type="button" data-rating="good">像</button>
+            <button type="button" data-rating="bad">不像</button>
+          </div>
+        </div>
+        <textarea
+          class="feedback-note hidden"
+          id="feedbackNote"
+          placeholder="哪里不像？写一句就好。"
+        ></textarea>
+        <button class="secondary-button hidden" id="saveFeedbackButton" type="button">
+          保存反馈
+        </button>
+      </section>
+    </main>
+
+    <dialog class="history-dialog" id="historyDialog">
+      <div class="dialog-head">
+        <strong>试用记录</strong>
+        <button class="ghost-button" id="closeHistoryButton" type="button">关闭</button>
+      </div>
+      <div class="history-list" id="historyList"></div>
+      <button class="secondary-button" id="copyFeedbackButton" type="button">
+        复制反馈给开发者
+      </button>
+    </dialog>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>

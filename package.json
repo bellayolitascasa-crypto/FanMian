@@ -1,0 +1,10 @@
+{
+  "name": "fanmian",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "check": "node --check server.mjs && node --check app.js && node --check api/flip.mjs && node --check lib/flip-core.mjs"
+  }
+}

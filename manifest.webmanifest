@@ -1,0 +1,16 @@
+{
+  "name": "翻面",
+  "short_name": "翻面",
+  "description": "把生活里的小烦恼翻成具体的好处。",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ebe7df",
+  "theme_color": "#f8f5ee",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
