@@ -5,14 +5,7 @@
   "installCommand": null,
   "functions": {
     "app.js": {
-      "includeFiles": [
-        "index.html",
-        "client.js",
-        "styles.css",
-        "manifest.webmanifest",
-        "icon.svg",
-        "sw.js"
-      ]
+      "includeFiles": "{index.html,client.js,styles.css,manifest.webmanifest,icon.svg,sw.js}"
     }
   },
   "rewrites": [
