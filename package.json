@@ -5,6 +5,6 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "check": "node --check server.mjs && node --check app.js && node --check api/flip.mjs && node --check lib/flip-core.mjs"
+    "check": "node --check server.mjs && node --check app.js && node --check client.js && node --check api/flip.mjs && node --check lib/flip-core.mjs"
   }
 }

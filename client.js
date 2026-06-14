@@ -3,20 +3,20 @@ const flipButton = document.querySelector("#flipButton");
 const buttonText = document.querySelector("#buttonText");
 const spinner = document.querySelector("#spinner");
 const counter = document.querySelector("#counter");
-const modeLabel = document.querySelector("#modeLabel");
 const inputPanel = document.querySelector("#inputPanel");
 const resultPanel = document.querySelector("#resultPanel");
+const finalPanel = document.querySelector("#finalPanel");
 const benefitsList = document.querySelector("#benefitsList");
 const nextStepText = document.querySelector("#nextStepText");
 const flipLineText = document.querySelector("#flipLineText");
+const finalLineText = document.querySelector("#finalLineText");
+const cardButton = document.querySelector("#cardButton");
 const newButton = document.querySelector("#newButton");
-const feedbackNote = document.querySelector("#feedbackNote");
-const saveFeedbackButton = document.querySelector("#saveFeedbackButton");
+const finalNewButton = document.querySelector("#finalNewButton");
 const historyButton = document.querySelector("#historyButton");
 const historyDialog = document.querySelector("#historyDialog");
 const closeHistoryButton = document.querySelector("#closeHistoryButton");
 const historyList = document.querySelector("#historyList");
-const copyFeedbackButton = document.querySelector("#copyFeedbackButton");
 
 const storageKey = "fanmian.records.v1";
 let currentRecord = null;
@@ -46,6 +46,7 @@ function setLoading(isLoading) {
 }
 
 function renderResult(result, worry) {
+  inputPanel.classList.add("hidden");
   benefitsList.innerHTML = "";
   result.benefits.forEach((benefit) => {
     const li = document.createElement("li");
@@ -54,18 +55,18 @@ function renderResult(result, worry) {
   });
   nextStepText.textContent = result.nextStep;
   flipLineText.textContent = result.flipLine;
-  modeLabel.textContent = result.mode === "demo" ? "演示翻面" : "AI 翻面";
+  finalLineText.textContent = result.flipLine;
 
   currentRecord = {
     id: crypto.randomUUID(),
     createdAt: new Date().toISOString(),
     worry,
     response: result,
-    rating: "",
-    note: "",
   };
   saveRecord(currentRecord);
 
+  document.body.dataset.view = "analysis";
+  finalPanel.classList.add("hidden");
   resultPanel.classList.remove("hidden");
   resultPanel.scrollIntoView({ block: "start", behavior: "smooth" });
 }
@@ -78,9 +79,6 @@ async function flipWorry() {
   }
 
   setLoading(true);
-  feedbackNote.value = "";
-  feedbackNote.classList.add("hidden");
-  saveFeedbackButton.classList.add("hidden");
 
   try {
     const response = await fetch("/api/flip", {
@@ -110,11 +108,22 @@ async function flipWorry() {
 }
 
 function resetInput() {
+  inputPanel.classList.remove("hidden");
   resultPanel.classList.add("hidden");
+  finalPanel.classList.add("hidden");
   worryInput.value = "";
   counter.textContent = "0/800";
+  document.body.dataset.view = "input";
   inputPanel.scrollIntoView({ block: "start", behavior: "smooth" });
   setTimeout(() => worryInput.focus(), 220);
+}
+
+function showFinal() {
+  if (!currentRecord) return;
+  document.body.dataset.view = "final";
+  resultPanel.classList.add("hidden");
+  finalPanel.classList.remove("hidden");
+  finalPanel.scrollIntoView({ block: "start", behavior: "smooth" });
 }
 
 function renderHistory() {
@@ -131,54 +140,17 @@ function renderHistory() {
     const item = document.createElement("article");
     item.className = "history-item";
     const title = document.createElement("strong");
-    title.textContent = record.rating ? `反馈：${record.rating === "good" ? "像" : "不像"}` : "未反馈";
+    title.textContent = new Date(record.createdAt).toLocaleDateString("zh-CN", {
+      month: "long",
+      day: "numeric",
+    });
     const worry = document.createElement("p");
     worry.textContent = `烦心事：${record.worry}`;
     const flip = document.createElement("p");
     flip.textContent = `翻面：${record.response.flipLine}`;
-    const note = document.createElement("p");
-    note.textContent = record.note ? `意见：${record.note}` : "";
     item.append(title, worry, flip);
-    if (record.note) item.append(note);
     historyList.appendChild(item);
   });
-}
-
-function exportFeedback() {
-  const text = getRecords()
-    .map((record, index) => {
-      const benefits = record.response.benefits.map((item, i) => `${i + 1}. ${item}`).join("\n");
-      return [
-        `${index + 1}.`,
-        `烦心事：${record.worry}`,
-        "好的一面：",
-        benefits,
-        `下一步：${record.response.nextStep}`,
-        `翻面：${record.response.flipLine}`,
-        `反馈：${record.rating || "未反馈"}`,
-        record.note ? `意见：${record.note}` : "",
-      ]
-        .filter(Boolean)
-        .join("\n");
-    })
-    .join("\n\n");
-
-  const output = text || "暂无反馈记录";
-  const done = () => {
-    copyFeedbackButton.textContent = "已复制";
-    setTimeout(() => {
-      copyFeedbackButton.textContent = "复制反馈给开发者";
-    }, 1200);
-  };
-
-  if (navigator.clipboard?.writeText) {
-    navigator.clipboard.writeText(output).then(done).catch(() => {
-      window.prompt("复制失败时，可以长按复制下面的反馈：", output);
-    });
-    return;
-  }
-
-  window.prompt("可以长按复制下面的反馈：", output);
 }
 
 worryInput.addEventListener("input", () => {
@@ -187,38 +159,19 @@ worryInput.addEventListener("input", () => {
 
 flipButton.addEventListener("click", flipWorry);
 newButton.addEventListener("click", resetInput);
+finalNewButton.addEventListener("click", resetInput);
+cardButton.addEventListener("click", showFinal);
 historyButton.addEventListener("click", () => {
   renderHistory();
   historyDialog.showModal();
 });
 closeHistoryButton.addEventListener("click", () => historyDialog.close());
-copyFeedbackButton.addEventListener("click", exportFeedback);
 
 document.querySelectorAll("[data-sample]").forEach((button) => {
   button.addEventListener("click", () => {
     worryInput.value = button.dataset.sample;
     counter.textContent = `${worryInput.value.length}/800`;
   });
-});
-
-document.querySelectorAll("[data-rating]").forEach((button) => {
-  button.addEventListener("click", () => {
-    if (!currentRecord) return;
-    currentRecord.rating = button.dataset.rating;
-    feedbackNote.classList.toggle("hidden", currentRecord.rating !== "bad");
-    saveFeedbackButton.classList.toggle("hidden", currentRecord.rating !== "bad");
-    saveRecord(currentRecord);
-  });
-});
-
-saveFeedbackButton.addEventListener("click", () => {
-  if (!currentRecord) return;
-  currentRecord.note = feedbackNote.value.trim();
-  saveRecord(currentRecord);
-  saveFeedbackButton.textContent = "已保存";
-  setTimeout(() => {
-    saveFeedbackButton.textContent = "保存反馈";
-  }, 1200);
 });
 
 if ("serviceWorker" in navigator) {

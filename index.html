@@ -8,14 +8,14 @@
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body>
+  <body data-view="input">
     <main class="app">
       <header class="topbar">
         <div class="brand">
           <span class="mark" aria-hidden="true"></span>
           <span>翻面</span>
         </div>
-        <button class="ghost-button" id="historyButton" type="button">记录</button>
+        <button class="ghost-button" id="historyButton" type="button">往回看</button>
       </header>
 
       <section class="panel input-panel" id="inputPanel">
@@ -26,7 +26,7 @@
           placeholder="写一件具体烦心事。比如：今天想打麻将，但我爸不想玩，三缺一。"
         ></textarea>
         <div class="input-meta">
-          <span id="modeLabel">AI 翻面</span>
+          <span>具体地写，才翻得准</span>
           <span id="counter">0/800</span>
         </div>
         <button class="primary-button" id="flipButton" type="button">
@@ -57,36 +57,29 @@
           <p id="nextStepText"></p>
         </div>
         <button class="flip-card" id="cardButton" type="button">
-          <span>翻面</span>
+          <span>点一下，翻到另一面</span>
           <strong id="flipLineText"></strong>
         </button>
-        <div class="feedback">
-          <span>这次像“翻面”吗？</span>
-          <div>
-            <button type="button" data-rating="good">像</button>
-            <button type="button" data-rating="bad">不像</button>
-          </div>
-        </div>
-        <textarea
-          class="feedback-note hidden"
-          id="feedbackNote"
-          placeholder="哪里不像？写一句就好。"
-        ></textarea>
-        <button class="secondary-button hidden" id="saveFeedbackButton" type="button">
-          保存反馈
-        </button>
+      </section>
+
+      <section class="final-screen hidden" id="finalPanel" aria-live="polite">
+        <div class="final-mark" aria-hidden="true"></div>
+        <p class="final-kicker">翻面完成</p>
+        <h1 id="finalLineText"></h1>
+        <p class="final-copy">
+          不是每件事都会马上变好，但你已经看见了另一面。把注意力收回自己身上，
+          做下一件小事，生活就会重新往前走。
+        </p>
+        <button class="primary-button light-button" id="finalNewButton" type="button">写下一件</button>
       </section>
     </main>
 
     <dialog class="history-dialog" id="historyDialog">
       <div class="dialog-head">
-        <strong>试用记录</strong>
+        <strong>翻面记录</strong>
         <button class="ghost-button" id="closeHistoryButton" type="button">关闭</button>
       </div>
       <div class="history-list" id="historyList"></div>
-      <button class="secondary-button" id="copyFeedbackButton" type="button">
-        复制反馈给开发者
-      </button>
     </dialog>
 
     <script src="./client.js" type="module"></script>
