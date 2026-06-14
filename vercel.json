@@ -3,6 +3,24 @@
   "buildCommand": null,
   "outputDirectory": ".",
   "installCommand": null,
+  "functions": {
+    "app.js": {
+      "includeFiles": [
+        "index.html",
+        "client.js",
+        "styles.css",
+        "manifest.webmanifest",
+        "icon.svg",
+        "sw.js"
+      ]
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/app.js"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
