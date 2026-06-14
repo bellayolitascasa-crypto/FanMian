@@ -19,6 +19,19 @@ function sendJson(res, status, body) {
   res.end(JSON.stringify(body));
 }
 
+async function readJsonBody(req) {
+  if (typeof req.body === "string") return JSON.parse(req.body || "{}");
+  if (req.body && typeof req.body === "object") return req.body;
+
+  const chunks = [];
+  for await (const chunk of req) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+
+  const text = Buffer.concat(chunks).toString("utf8");
+  return text ? JSON.parse(text) : {};
+}
+
 function getStaticPath(url) {
   const { pathname } = new URL(url, "https://fanmian.local");
   const requested = pathname === "/" ? "/index.html" : pathname;
@@ -44,7 +57,7 @@ async function serveStatic(req, res) {
 export default async function handler(req, res) {
   try {
     if (req.method === "POST" && req.url === "/api/flip") {
-      const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+      const body = await readJsonBody(req);
       const worry = String(body.worry || "").trim();
       if (!worry) return sendJson(res, 400, { error: "请输入烦心事。" });
       if (worry.length > 800) return sendJson(res, 400, { error: "先控制在 800 字以内。" });
